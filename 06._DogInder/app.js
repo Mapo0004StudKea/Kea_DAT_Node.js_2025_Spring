@@ -5,20 +5,18 @@ const app = express();
 app.use(express.static("public"));
 
 import path from 'path';
-import fs from 'fs';
+
+
+import { frontpagePage, matchesPage } from './util/pages.js';
 
 import { getMatches } from './util/matches.js';
 
-const frontpage = fs.readFileSync('./public/frontpage/frontpage.html').toString();
-const matches = fs.readFileSync('./public/matches/matches.html').toString();
-
-
 app.get("/", (req, res) => {
-    res.send(frontpage);
+    res.send(frontpagePage);
 });
 
 app.get("/matches", (req, res) => {
-    res.sendFile(path.resolve('public/matches/matches.html'));
+    res.send(matchesPage);
 });
 
 app.get("/api/matches", async (req, res) => {
