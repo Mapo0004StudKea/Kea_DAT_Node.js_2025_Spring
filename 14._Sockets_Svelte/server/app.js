@@ -1,8 +1,29 @@
+import "dotenv/config";
+
 import express from 'express';
 
 const app = express();
 
 app.use(express.static("public"));
+app.use(express.json());
+
+import cors from 'cors';
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
+
+import session from 'express-session';
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
+
+import nicknamesRouter from './routers/nicknamesRouter.js';
+app.use(nicknamesRouter);
 
 import http from 'http';
 
@@ -10,7 +31,11 @@ const server = http.createServer(app);
 
 import { Server } from 'socket.io';
 
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:5173"
+    }
+});
 
 io.on("connection", (socket) => {
     console.log("A client connected", socket.id);
